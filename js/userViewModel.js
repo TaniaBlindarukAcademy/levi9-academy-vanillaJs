@@ -9,7 +9,6 @@ var UserViewModel = (function (viewModel) {
         userPartialView.getElementsByClassName('card-img-top')[0].src = user['avatar_url'];
         userPartialView.getElementsByClassName('panel')[0].setAttribute('data-id', user['id']);
         user['site_admin'] ? userPartialView.getElementsByClassName('admin')[0].innerHTML = "Admin" : null;
-        return userPartialView.innerHTML;
     }
 
     function toggle(element) {
@@ -35,6 +34,10 @@ var UserViewModel = (function (viewModel) {
                     html.innerHTML = htmlText;
                     self.htmlDocument = html;
                     self.htmlText = showUser(html, self.user);
+                    var headPanel = html.getElementsByClassName('panel-user-heading');
+                    headPanel.onclick = function () {
+                        self.toggleBody(html.getElementsByClassName('panel-user-body'));
+                    };
                     resolve(true);
                 }, function (error) {
                     reject(error);
@@ -43,8 +46,8 @@ var UserViewModel = (function (viewModel) {
         })
     };
 
-    PublicApi.getHtml = function () {
-        return this.htmlText;
+    PublicApi.getElement = function () {
+        return this.htmlDocument.getElementsByClassName('panel-user')[0];
     };
 
     PublicApi.toggleBody = function (element) {
