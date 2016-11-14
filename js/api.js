@@ -30,24 +30,19 @@ window.app.api = (function () {
             return sendRequest('https://api.github.com/users');
         },
         getUser: function (user) {
-            var userUrl = `https://api.github.com/user/${user['id']}`;
-            return sendRequest(userUrl);
+            return sendRequest(`https://api.github.com/user/${user['id']}`);
         },
         getUserFollowers: function (user) {
-            var followers_url = user['followers_url'];
-            return getUserLinks(followers_url);
+            return getUserLinks(user['followers_url']);
         },
         getUserFollowings: function (user) {
-            var followings_url = `https://api.github.com/users/${user['login']}/following`;
-            return getUserLinks(followings_url);
+            return getUserLinks(`https://api.github.com/users/${user['login']}/following`);
         },
         getUserStarred: function (user) {
-            var starred_url = `https://api.github.com/users/${user['login']}/starred`;
-            return getUserLinks(starred_url);
+            return getUserLinks(`https://api.github.com/users/${user['login']}/starred`);
         },
         getUserSubscriptions: function (user) {
-            var subscription_url = user['subscriptions_url'];
-            return getUserLinks(subscription_url);
+            return getUserLinks(user['subscriptions_url']);
         },
         getUserOrganizations: function (user) {
             return getUserLinks(user['organizations_url']);

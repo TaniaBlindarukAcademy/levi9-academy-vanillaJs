@@ -3,9 +3,8 @@
  */
 
 var UserViewModel = (function (viewModel, api) {
-
     function showUser(userPartialView, user) {
-        userPartialView.getElementsByClassName('title')[0].innerHTML = user['login'];
+        userPartialView.getElementsByClassName('login')[0].innerHTML = user['login'];
         userPartialView.getElementsByClassName('card-img-top')[0].src = user['avatar_url'];
         userPartialView.getElementsByClassName('panel')[0].setAttribute('data-id', user['id']);
         user['site_admin'] ? userPartialView.getElementsByClassName('admin')[0].innerHTML = "Admin" : null;
@@ -23,19 +22,17 @@ var UserViewModel = (function (viewModel, api) {
         }
     }
 
-    function appendLinks(self, linksBlockClass, callback) {
+    function appendLinks(self, linksBlockClass, callback, urlParam, nameParam) {
         var user = self.user;
         var followersListElement = self.userBlock.getElementsByClassName(linksBlockClass)[0];
-        callback(user).then(function (followers) {
+        callback(user).then(function (values) {
             debugger;
-            for (let i = 0; i < followers.length; ++i) {
+            for (let i = 0; i < values.length; ++i) {
+                var value = values[i];
 
-                var url = followers[i]['html_url'];
-                url = url ? url : followers[i]['git_url'];
-                url = url ? url : followers[i]['url'];
+                var url = urlParam ? value[urlParam] : value['html_url'];
 
-                var name = followers[i]['login'];
-                name = name ? name : followers[i]['full_name'];
+                var name = nameParam ? value[nameParam] : value['login'];
 
                 var followerElement = document.createElement('A');
                 followerElement.innerHTML = name;
@@ -50,12 +47,13 @@ var UserViewModel = (function (viewModel, api) {
         })
     }
 
-    var PublicApi = Object.create(viewModel);
+    var UserViewModel = Object.create(viewModel);
 
-    PublicApi.init = function (user) {
+    UserViewModel.init = function (user, templateOption) {
         var self = this;
         self.user = user;
         self.htmlDocument = false;
+        self.initTemplateOption(templateOption);
         return new Promise(function (resolve, reject) {
             self.readPartial('partial/user.html')
                 .then(function (htmlText) {
@@ -75,36 +73,70 @@ var UserViewModel = (function (viewModel, api) {
         })
     };
 
-    PublicApi.getUserBlock = function (document, number) {
+    UserViewModel.initTemplateOption = function (templateOption) {
+        this.templateOption = templateOption;
+        if (!this.templateOption) {
+            this.templateOption = {};
+        }
+        if (!this.templateOption.classNames) {
+            this.templateOption.classNames = {};
+        }
+        if (!this.templateOption.classNames) {
+            this.templateOption.classNames = {};
+        }
+        if (!this.templateOption.classNames['mainBlock']) {
+            this.templateOption.classNames['mainBlock'] = 'panel-user';
+        }
+        if (!this.templateOption.classNames['headingBlock']) {
+            this.templateOption.classNames['headingBlock'] = 'panel-user-heading';
+        }
+        if (!this.templateOption.classNames['userName']) {
+            this.templateOption.classNames['userName'] = 'user-name';
+        }
+        if (!this.templateOption.classNames['userEmail']) {
+            this.templateOption.classNames['userEmail'] = 'user-email';
+        }
+        if (!this.templateOption.classNames['followerLinks']) {
+            this.templateOption.classNames['followerLinks'] = 'follower-links';
+        }
+        if (!this.templateOption.classNames['followingsLinks']) {
+            this.templateOption.classNames['followingsLinks'] = 'followings-links';
+        }
+        if (!this.templateOption.classNames['starredLinks']) {
+            this.templateOption.classNames['starredLinks'] = 'starred-links';
+        }
+        if (!this.templateOption.classNames['subscriptionLinks']) {
+            this.templateOption.classNames['subscriptionLinks'] = 'subscription-links';
+        }
+        if (!this.templateOption.classNames['organizationLinks']) {
+            this.templateOption.classNames['organizationLinks'] = 'organization-links';
+        }
+        if (!this.templateOption.classNames['reposLinks']) {
+            this.templateOption.classNames['reposLinks'] = 'repos-links';
+        }
+        return this;
+    };
+
+    UserViewModel.getUserBlock = function (document, number) {
         if (!this.userBlock) {
             document = document ? document : this.htmlDocument;
             number = number ? number : 0;
-            this.userBlock = document.getElementsByClassName('panel-user')[number];
+            this.userBlock = document.getElementsByClassName(this.templateOption.classNames['mainBlock'])[number];
         }
 
         return this.userBlock;
     };
 
-    PublicApi.onClickHead = function (element) {
+    UserViewModel.onClickHead = function (element) {
         var self = this;
-        element = element.getElementsByClassName('panel-user-heading')[0];
+        element = element.getElementsByClassName(self.templateOption.classNames['headingBlock'])[0];
         element.onclick = function () {
             var show = self.toggleBody(element);
             if (show && !self.isUserLoaded) {
                 api.getUser(self.user).then(function (val) {
                     self.user = val;
-
-                    self.appendUserName();
-                    self.appendUserEmail();
-                    self.appendUserFollowers();
-                    self.appendUserFollowings();
-                    self.appendUserStarred();
-                    self.appendUserSubscription();
-                    self.appendUserOrganization();
-                    self.appendUserRepos();
-
+                    self.addAdditionalInformation();
                     self.isUserLoaded = false;
-
                 }, function (error) {
 
                 });
@@ -112,17 +144,28 @@ var UserViewModel = (function (viewModel, api) {
         };
     };
 
-    PublicApi.toggleBody = function (element) {
+    UserViewModel.addAdditionalInformation = function () {
+        this.appendUserName();
+        this.appendUserEmail();
+        this.appendUserFollowers();
+        this.appendUserFollowings();
+        this.appendUserStarred();
+        this.appendUserSubscription();
+        this.appendUserOrganization();
+        this.appendUserRepos();
+    };
+
+    UserViewModel.toggleBody = function (element) {
         return toggle(element.nextElementSibling);
     };
 
-    PublicApi.appendUserName = function (user) {
-        this.userBlock.getElementsByClassName('user-name')[0].innerHTML = this.user['name'];
+    UserViewModel.appendUserName = function () {
+        this.userBlock.getElementsByClassName(this.templateOption.classNames['userName'])[0].innerHTML = this.user['name'];
 
     };
 
-    PublicApi.appendUserEmail = function (user) {
-        var emailElement = this.userBlock.getElementsByClassName('user-email')[0];
+    UserViewModel.appendUserEmail = function () {
+        var emailElement = this.userBlock.getElementsByClassName(this.templateOption.classNames['userEmail'])[0];
         var email = this.user['email'];
         if (email) {
             emailElement.innerHTML = `(${email})`;
@@ -130,29 +173,29 @@ var UserViewModel = (function (viewModel, api) {
         }
     };
 
-    PublicApi.appendUserFollowers = function () {
-        appendLinks(this, 'follower-links', api.getUserFollowers);
+    UserViewModel.appendUserFollowers = function () {
+        appendLinks(this, this.templateOption.classNames['followerLinks'], api.getUserFollowers);
     };
 
-    PublicApi.appendUserFollowings = function () {
-        appendLinks(this, 'followings-links', api.getUserFollowings);
+    UserViewModel.appendUserFollowings = function () {
+        appendLinks(this, this.templateOption.classNames['followingsLinks'], api.getUserFollowings);
     };
 
-    PublicApi.appendUserStarred = function () {
-        appendLinks(this, 'starred-links', api.getUserStarred);
+    UserViewModel.appendUserStarred = function () {
+        appendLinks(this, this.templateOption.classNames['starredLinks'], api.getUserStarred, 'html_url', 'name');
     };
 
-    PublicApi.appendUserSubscription = function () {
-        appendLinks(this, 'subscription-links', api.getUserSubscriptions);
+    UserViewModel.appendUserSubscription = function () {
+        appendLinks(this, this.templateOption.classNames['subscriptionLinks'], api.getUserSubscriptions, 'html_url', 'name');
     };
 
-    PublicApi.appendUserOrganization = function () {
-        appendLinks(this, 'organization-links', api.getUserOrganizations);
+    UserViewModel.appendUserOrganization = function () {
+        appendLinks(this, this.templateOption.classNames['organizationLinks'], api.getUserOrganizations, 'url', 'login');
     };
 
-    PublicApi.appendUserRepos = function () {
-        appendLinks(this, 'repos-links', api.getUserRepos)
+    UserViewModel.appendUserRepos = function () {
+        appendLinks(this, this.templateOption.classNames['reposLinks'], api.getUserRepos, 'html_url', 'full_name')
     };
 
-    return PublicApi;
+    return UserViewModel;
 })(window.app.viewModel, window.app.api);
