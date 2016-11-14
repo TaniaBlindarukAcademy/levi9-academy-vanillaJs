@@ -9,3 +9,10 @@
 .user-links .list-group-item{
     overflow: hidden;
 }
+.panel-user .panel-heading .admin{
+    font-weight: bold;
+}
+
+.bold-text{
+    font-weight: bold;
+}

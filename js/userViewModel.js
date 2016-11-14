@@ -3,11 +3,14 @@
  */
 
 var UserViewModel = (function (viewModel, api) {
+
+    var templateOptionGlobal = {};
+
     function showUser(userPartialView, user) {
-        userPartialView.getElementsByClassName('login')[0].innerHTML = user['login'];
-        userPartialView.getElementsByClassName('card-img-top')[0].src = user['avatar_url'];
-        userPartialView.getElementsByClassName('panel')[0].setAttribute('data-id', user['id']);
-        user['site_admin'] ? userPartialView.getElementsByClassName('admin')[0].innerHTML = "Admin" : null;
+        var templateClassOption = templateOptionGlobal.classNames;
+        userPartialView.getElementsByClassName(templateClassOption['login'])[0].innerHTML = user['login'];
+        userPartialView.getElementsByClassName(templateClassOption['avatar'])[0].src = user['avatar_url'];
+        user['site_admin'] ? userPartialView.getElementsByClassName(templateClassOption['admin'])[0].innerHTML = "Admin" : null;
     }
 
     function toggle(element) {
@@ -26,7 +29,6 @@ var UserViewModel = (function (viewModel, api) {
         var user = self.user;
         var followersListElement = self.userBlock.getElementsByClassName(linksBlockClass)[0];
         callback(user).then(function (values) {
-            debugger;
             for (let i = 0; i < values.length; ++i) {
                 var value = values[i];
 
@@ -74,45 +76,57 @@ var UserViewModel = (function (viewModel, api) {
     };
 
     UserViewModel.initTemplateOption = function (templateOption) {
-        this.templateOption = templateOption;
-        if (!this.templateOption) {
-            this.templateOption = {};
+        templateOptionGlobal = templateOption;
+        if (!templateOptionGlobal) {
+            templateOptionGlobal = {};
         }
-        if (!this.templateOption.classNames) {
-            this.templateOption.classNames = {};
+        if (!templateOptionGlobal.classNames) {
+            templateOptionGlobal.classNames = {};
         }
-        if (!this.templateOption.classNames) {
-            this.templateOption.classNames = {};
+        if (!templateOptionGlobal.classNames) {
+            templateOptionGlobal.classNames = {};
         }
-        if (!this.templateOption.classNames['mainBlock']) {
-            this.templateOption.classNames['mainBlock'] = 'panel-user';
+        if (!templateOptionGlobal.classNames['mainBlock']) {
+            templateOptionGlobal.classNames['mainBlock'] = 'panel-user';
         }
-        if (!this.templateOption.classNames['headingBlock']) {
-            this.templateOption.classNames['headingBlock'] = 'panel-user-heading';
+        if (!templateOptionGlobal.classNames['headingBlock']) {
+            templateOptionGlobal.classNames['headingBlock'] = 'panel-user-heading';
         }
-        if (!this.templateOption.classNames['userName']) {
-            this.templateOption.classNames['userName'] = 'user-name';
+        if (!templateOptionGlobal.classNames['userName']) {
+            templateOptionGlobal.classNames['userName'] = 'user-name';
         }
-        if (!this.templateOption.classNames['userEmail']) {
-            this.templateOption.classNames['userEmail'] = 'user-email';
+        if (!templateOptionGlobal.classNames['userEmail']) {
+            templateOptionGlobal.classNames['userEmail'] = 'user-email';
         }
-        if (!this.templateOption.classNames['followerLinks']) {
-            this.templateOption.classNames['followerLinks'] = 'follower-links';
+        if (!templateOptionGlobal.classNames['followerLinks']) {
+            templateOptionGlobal.classNames['followerLinks'] = 'follower-links';
         }
-        if (!this.templateOption.classNames['followingsLinks']) {
-            this.templateOption.classNames['followingsLinks'] = 'followings-links';
+        if (!templateOptionGlobal.classNames['followingsLinks']) {
+            templateOptionGlobal.classNames['followingsLinks'] = 'followings-links';
         }
-        if (!this.templateOption.classNames['starredLinks']) {
-            this.templateOption.classNames['starredLinks'] = 'starred-links';
+        if (!templateOptionGlobal.classNames['starredLinks']) {
+            templateOptionGlobal.classNames['starredLinks'] = 'starred-links';
         }
-        if (!this.templateOption.classNames['subscriptionLinks']) {
-            this.templateOption.classNames['subscriptionLinks'] = 'subscription-links';
+        if (!templateOptionGlobal.classNames['subscriptionLinks']) {
+            templateOptionGlobal.classNames['subscriptionLinks'] = 'subscription-links';
         }
-        if (!this.templateOption.classNames['organizationLinks']) {
-            this.templateOption.classNames['organizationLinks'] = 'organization-links';
+        if (!templateOptionGlobal.classNames['organizationLinks']) {
+            templateOptionGlobal.classNames['organizationLinks'] = 'organization-links';
         }
-        if (!this.templateOption.classNames['reposLinks']) {
-            this.templateOption.classNames['reposLinks'] = 'repos-links';
+        if (!templateOptionGlobal.classNames['reposLinks']) {
+            templateOptionGlobal.classNames['reposLinks'] = 'repos-links';
+        }
+        if (!templateOptionGlobal.classNames['login']) {
+            templateOptionGlobal.classNames['login'] = 'login';
+        }
+        if (!templateOptionGlobal.classNames['login']) {
+            templateOptionGlobal.classNames['login'] = 'login';
+        }
+        if (!templateOptionGlobal.classNames['avatar']) {
+            templateOptionGlobal.classNames['avatar'] = 'avatar';
+        }
+        if (!templateOptionGlobal.classNames['admin']) {
+            templateOptionGlobal.classNames['admin'] = 'admin';
         }
         return this;
     };
@@ -121,7 +135,7 @@ var UserViewModel = (function (viewModel, api) {
         if (!this.userBlock) {
             document = document ? document : this.htmlDocument;
             number = number ? number : 0;
-            this.userBlock = document.getElementsByClassName(this.templateOption.classNames['mainBlock'])[number];
+            this.userBlock = document.getElementsByClassName(templateOptionGlobal.classNames['mainBlock'])[number];
         }
 
         return this.userBlock;
@@ -129,7 +143,7 @@ var UserViewModel = (function (viewModel, api) {
 
     UserViewModel.onClickHead = function (element) {
         var self = this;
-        element = element.getElementsByClassName(self.templateOption.classNames['headingBlock'])[0];
+        element = element.getElementsByClassName(templateOptionGlobal.classNames['headingBlock'])[0];
         element.onclick = function () {
             var show = self.toggleBody(element);
             if (show && !self.isUserLoaded) {
@@ -160,12 +174,12 @@ var UserViewModel = (function (viewModel, api) {
     };
 
     UserViewModel.appendUserName = function () {
-        this.userBlock.getElementsByClassName(this.templateOption.classNames['userName'])[0].innerHTML = this.user['name'];
+        this.userBlock.getElementsByClassName(templateOptionGlobal.classNames['userName'])[0].innerHTML = this.user['name'];
 
     };
 
     UserViewModel.appendUserEmail = function () {
-        var emailElement = this.userBlock.getElementsByClassName(this.templateOption.classNames['userEmail'])[0];
+        var emailElement = this.userBlock.getElementsByClassName(templateOptionGlobal.classNames['userEmail'])[0];
         var email = this.user['email'];
         if (email) {
             emailElement.innerHTML = `(${email})`;
@@ -174,27 +188,27 @@ var UserViewModel = (function (viewModel, api) {
     };
 
     UserViewModel.appendUserFollowers = function () {
-        appendLinks(this, this.templateOption.classNames['followerLinks'], api.getUserFollowers);
+        appendLinks(this, templateOptionGlobal.classNames['followerLinks'], api.getUserFollowers);
     };
 
     UserViewModel.appendUserFollowings = function () {
-        appendLinks(this, this.templateOption.classNames['followingsLinks'], api.getUserFollowings);
+        appendLinks(this, templateOptionGlobal.classNames['followingsLinks'], api.getUserFollowings);
     };
 
     UserViewModel.appendUserStarred = function () {
-        appendLinks(this, this.templateOption.classNames['starredLinks'], api.getUserStarred, 'html_url', 'name');
+        appendLinks(this, templateOptionGlobal.classNames['starredLinks'], api.getUserStarred, 'html_url', 'name');
     };
 
     UserViewModel.appendUserSubscription = function () {
-        appendLinks(this, this.templateOption.classNames['subscriptionLinks'], api.getUserSubscriptions, 'html_url', 'name');
+        appendLinks(this, templateOptionGlobal.classNames['subscriptionLinks'], api.getUserSubscriptions, 'html_url', 'name');
     };
 
     UserViewModel.appendUserOrganization = function () {
-        appendLinks(this, this.templateOption.classNames['organizationLinks'], api.getUserOrganizations, 'url', 'login');
+        appendLinks(this, templateOptionGlobal.classNames['organizationLinks'], api.getUserOrganizations, 'url', 'login');
     };
 
     UserViewModel.appendUserRepos = function () {
-        appendLinks(this, this.templateOption.classNames['reposLinks'], api.getUserRepos, 'html_url', 'full_name')
+        appendLinks(this, templateOptionGlobal.classNames['reposLinks'], api.getUserRepos, 'html_url', 'full_name')
     };
 
     return UserViewModel;
