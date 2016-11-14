@@ -2,6 +2,10 @@
     display: none;
 }
 
-.panel-user {
+.panel-user-heading {
     cursor: pointer;
+}
+
+.user-links .list-group-item{
+    overflow: hidden;
 }

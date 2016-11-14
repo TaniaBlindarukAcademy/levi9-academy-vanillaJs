@@ -7,10 +7,10 @@ var app = (function (api) {
     var userList = document.getElementById('userList');
 
     function showUsers(users) {
-        for (var i = 0; i < users.length; ++i) {
+        for (let i = 0; i < users.length; ++i) {
             let userView = Object.create(UserViewModel);
             userView.init(users[i]).then(function (value) {
-                userList.appendChild(userView.getElement());
+                userList.appendChild(userView.getUserBlock());
             }, function (error) {
 
             });
@@ -21,11 +21,11 @@ var app = (function (api) {
         userList: function () {
             api.getUsers()
                 .then(function (users) {
-                    showUsers(users);
-                },
-                function (error) {
-                    alert(error);
-                });
+                        showUsers(users);
+                    },
+                    function (error) {
+                        alert(error);
+                    });
         },
         init: function () {
             this.userList();
