@@ -11,6 +11,7 @@ var app = (function (api) {
             let userView = Object.create(UserViewModel);
             userView.init(users[i]).then(function (value) {
                 userList.appendChild(userView.getUserBlock());
+                console.log(i);
             }, function (error) {
 
             });
