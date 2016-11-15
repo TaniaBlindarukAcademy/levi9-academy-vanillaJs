@@ -83,9 +83,6 @@ var UserViewModel = (function (viewModel, api) {
         if (!templateOptionGlobal.classNames) {
             templateOptionGlobal.classNames = {};
         }
-        if (!templateOptionGlobal.classNames) {
-            templateOptionGlobal.classNames = {};
-        }
         if (!templateOptionGlobal.classNames['mainBlock']) {
             templateOptionGlobal.classNames['mainBlock'] = 'panel-user';
         }
@@ -115,9 +112,6 @@ var UserViewModel = (function (viewModel, api) {
         }
         if (!templateOptionGlobal.classNames['reposLinks']) {
             templateOptionGlobal.classNames['reposLinks'] = 'repos-links';
-        }
-        if (!templateOptionGlobal.classNames['login']) {
-            templateOptionGlobal.classNames['login'] = 'login';
         }
         if (!templateOptionGlobal.classNames['login']) {
             templateOptionGlobal.classNames['login'] = 'login';
